@@ -1,68 +1,36 @@
-# 🛡️ Spryzen+ — The Autonomous Future of Web & AI Defense
+This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
 
-An animated, scroll-driven showcase website for **Spryzen+** — a next-generation Web Application Firewall with sub-microsecond eBPF inspection, self-healing AI, hardware-bound identity, and post-quantum cryptography.
+## Getting Started
 
-**Team Spryzen:** Sanjit Pawar · Aditya Dahale · Jainil Nakrani
-
----
-
-## 🚀 Live Features
-
-- **3D Shield Scene** — Three.js rotating shield with attack particles and bloom effects
-- **3D Architecture Graph** — Interactive node graph showing the engine topology
-- **Scroll Animations** — Framer Motion staggered reveals across all sections
-- **Ouroboros Spotlight** — Animated terminal showing the self-healing red-team cycle
-- **Spryzen ID Spotlight** — Hardware-bound passport + eBPF blackholing visualization
-- **Benchmark Comparison Table** — Spryzen+ vs AWS WAF vs Cloudflare vs ModSecurity
-- **6 Core Module Cards** — WAF Engine, eBPF Shield, LSH Cache, PQC, ZK-DPI, HTTP Smuggling
-- **Dark Neon Design System** — Glass morphism, glow orbs, terminal UI
-
----
-
-## 📦 Tech Stack
-
-- **Next.js 15** + React 19
-- **Three.js** + React Three Fiber + Drei + Postprocessing
-- **Framer Motion** (scroll-driven animations)
-- **Tailwind CSS v4**
-- **TypeScript**
-
----
-
-## 🛠️ Getting Started
+First, run the development server:
 
 ```bash
-# Install dependencies
-npm install
-
-# Start dev server
 npm run dev
-
-# Build for production
-npm run build
+# or
+yarn dev
+# or
+pnpm dev
+# or
+bun dev
 ```
 
-Open [http://localhost:3000](http://localhost:3000) to view the site.
+Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
 
----
+You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
 
-## 🔗 Related Repositories
+This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
 
-- **[Spryzen+ Source Code](https://github.com/Aditya-9-6/spryzen-test-1)** — Full Rust engine with eBPF, Monoio, Ouroboros, and AI modules
-- **[Spryzen Benchmarks](https://github.com/Aditya-9-6/Spryzen-Benchmarks)** — Automated Grafana k6 benchmark suite (reproducible via Docker)
+## Learn More
 
----
+To learn more about Next.js, take a look at the following resources:
 
-## 📊 Verified Performance (Single CPU Core)
+- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
+- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
 
-| Metric | Value |
-| :--- | :---: |
-| P50 CPU Inspection Latency | **0.207 µs (207 ns)** |
-| Single-Core Throughput | **4,837,480 RPS** |
-| Attack Mitigation Accuracy | **100.0%** |
-| Error Rate | **0.000%** |
-| Requests Verified | **500,000** |
+You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
 
----
+## Deploy on Vercel
 
-© 2026 Team Spryzen
+The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+
+Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.

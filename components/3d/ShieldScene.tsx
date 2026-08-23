@@ -7,6 +7,7 @@ import { EffectComposer, Bloom, ChromaticAberration } from '@react-three/postpro
 import * as THREE from 'three';
 import { Suspense } from 'react';
 
+// ─── Shield Core Mesh ───────────────────────────────────────────────────
 function ShieldMesh() {
   const meshRef = useRef<THREE.Mesh>(null);
   const ringRef = useRef<THREE.Mesh>(null);
@@ -22,6 +23,7 @@ function ShieldMesh() {
 
   return (
     <group>
+      {/* Core shield sphere */}
       <Sphere ref={meshRef} args={[1.4, 64, 64]}>
         <MeshDistortMaterial
           color="#00d4ff"
@@ -36,6 +38,8 @@ function ShieldMesh() {
           wireframe={false}
         />
       </Sphere>
+
+      {/* Inner glow sphere */}
       <Sphere args={[1.2, 32, 32]}>
         <meshStandardMaterial
           color="#00d4ff"
@@ -45,18 +49,26 @@ function ShieldMesh() {
           opacity={0.08}
         />
       </Sphere>
+
+      {/* Orbiting rings */}
       <Ring ref={ringRef} args={[1.8, 1.85, 128]} rotation={[Math.PI / 4, 0, 0]}>
         <meshBasicMaterial color="#00d4ff" transparent opacity={0.4} side={THREE.DoubleSide} />
       </Ring>
       <Ring ref={ring2Ref} args={[2.1, 2.14, 128]} rotation={[Math.PI / 3, Math.PI / 6, 0]}>
         <meshBasicMaterial color="#7c3aed" transparent opacity={0.25} side={THREE.DoubleSide} />
       </Ring>
+
+      {/* Point light at center */}
       <pointLight color="#00d4ff" intensity={8} distance={6} />
     </group>
   );
 }
 
-function AttackParticle({ position }: { position: THREE.Vector3 }) {
+// ─── Attack Particles ───────────────────────────────────────────────────
+function AttackParticle({ position, targetRef }: {
+  position: THREE.Vector3;
+  targetRef: React.RefObject<THREE.Group>;
+}) {
   const particleRef = useRef<THREE.Mesh>(null);
   const velocityRef = useRef<THREE.Vector3>(
     new THREE.Vector3().copy(position).negate().normalize().multiplyScalar(0.04)
@@ -67,6 +79,8 @@ function AttackParticle({ position }: { position: THREE.Vector3 }) {
   useFrame(() => {
     if (!particleRef.current || !alive.current) return;
     particleRef.current.position.add(velocityRef.current);
+
+    // Check if hit shield (within radius 1.5)
     const dist = particleRef.current.position.length();
     if (dist < 1.5) {
       alive.current = false;
@@ -75,7 +89,12 @@ function AttackParticle({ position }: { position: THREE.Vector3 }) {
   });
 
   return (
-    <Trail width={0.3} length={6} color={color.current} attenuation={(t) => t * t}>
+    <Trail
+      width={0.3}
+      length={6}
+      color={color.current}
+      attenuation={(t) => t * t}
+    >
       <mesh ref={particleRef} position={position.toArray()}>
         <sphereGeometry args={[0.04, 8, 8]} />
         <meshBasicMaterial color={color.current} />
@@ -84,7 +103,9 @@ function AttackParticle({ position }: { position: THREE.Vector3 }) {
   );
 }
 
+// ─── Particle Field ──────────────────────────────────────────────────────
 function AttackParticles() {
+  const groupRef = useRef<THREE.Group>(null);
   const positions = useRef<THREE.Vector3[]>(
     Array.from({ length: 18 }, () => {
       const theta = Math.random() * Math.PI * 2;
@@ -99,36 +120,66 @@ function AttackParticles() {
   );
 
   return (
-    <group>
+    <group ref={groupRef}>
       {positions.current.map((pos, i) => (
-        <AttackParticle key={i} position={pos} />
+        <AttackParticle key={i} position={pos} targetRef={groupRef as React.RefObject<THREE.Group>} />
       ))}
     </group>
   );
 }
 
+// ─── Ambient Star Field ──────────────────────────────────────────────────
 function SceneSetup() {
   const { camera } = useThree();
-  useEffect(() => { camera.position.set(0, 0, 6); }, [camera]);
+
+  useEffect(() => {
+    camera.position.set(0, 0, 6);
+  }, [camera]);
+
   return null;
 }
 
+// ─── Main Shield Scene ───────────────────────────────────────────────────
 export default function ShieldScene() {
   return (
-    <div style={{ width: '100%', height: '100%', position: 'absolute', inset: 0 }} aria-hidden="true">
-      <Canvas dpr={[1, 2]} gl={{ antialias: true, alpha: true }} camera={{ fov: 50, near: 0.1, far: 100 }}>
+    <div
+      style={{ width: '100%', height: '100%', position: 'absolute', inset: 0 }}
+      aria-hidden="true"
+    >
+      <Canvas
+        dpr={[1, 2]}
+        gl={{ antialias: true, alpha: true }}
+        camera={{ fov: 50, near: 0.1, far: 100 }}
+      >
         <Suspense fallback={null}>
           <SceneSetup />
+
+          {/* Ambient lighting */}
           <ambientLight intensity={0.2} />
           <directionalLight position={[5, 5, 5]} intensity={0.5} color="#ffffff" />
+
+          {/* HDRI Environment */}
           <Environment preset="night" />
+
+          {/* Stars background */}
           <Stars radius={80} depth={50} count={3000} factor={4} saturation={0} fade speed={0.5} />
+
+          {/* Main floating shield */}
           <Float speed={1.5} rotationIntensity={0.3} floatIntensity={0.5}>
             <ShieldMesh />
           </Float>
+
+          {/* Attack particles */}
           <AttackParticles />
+
+          {/* Post-processing */}
           <EffectComposer>
-            <Bloom intensity={1.2} luminanceThreshold={0.2} luminanceSmoothing={0.9} height={300} />
+            <Bloom
+              intensity={1.2}
+              luminanceThreshold={0.2}
+              luminanceSmoothing={0.9}
+              height={300}
+            />
             <ChromaticAberration offset={[0.0005, 0.0005]} />
           </EffectComposer>
         </Suspense>
