@@ -3,13 +3,16 @@
 import { useEffect, useRef, useState } from 'react';
 import Link from 'next/link';
 import { motion, AnimatePresence } from 'framer-motion';
-import { Shield, Bell, Menu, X, ChevronRight, Zap } from 'lucide-react';
+import { Shield, Menu, X, ChevronRight, Github, ExternalLink } from 'lucide-react';
 
 const navLinks = [
-  { label: 'Technology', href: '/features' },
-  { label: 'Pricing',    href: '/pricing' },
-  { label: 'War Game',  href: '/wargame' },
-  { label: 'Contact',   href: '/contact' },
+  { label: 'Problem',      href: '#problem' },
+  { label: 'Architecture', href: '#architecture' },
+  { label: 'Ouroboros',    href: '#ouroboros' },
+  { label: 'Spryzen ID',   href: '#spryzen-id' },
+  { label: 'Features',     href: '#features' },
+  { label: 'Benchmarks',   href: '#benchmarks' },
+  { label: 'Team',         href: '#team' },
 ];
 
 export default function Navbar() {
@@ -64,31 +67,35 @@ export default function Navbar() {
         {/* Desktop Nav Links */}
         <div className="hidden md:flex items-center gap-1 mx-auto">
           {navLinks.map((link) => (
-            <Link
+            <a
               key={link.href}
               href={link.href}
-              className="px-4 py-2 rounded-lg text-sm font-medium text-[var(--text-secondary)] hover:text-[var(--text-primary)] hover:bg-[var(--glass-surface)] transition-all duration-200"
+              className="px-3.5 py-2 rounded-lg text-sm font-medium text-[var(--text-secondary)] hover:text-[var(--text-primary)] hover:bg-[var(--glass-surface)] transition-all duration-200"
             >
               {link.label}
-            </Link>
+            </a>
           ))}
         </div>
 
-        {/* CTA Buttons */}
+        {/* Action Buttons */}
         <div className="hidden md:flex items-center gap-3">
-          <Link
-            href="/auth/login"
-            className="btn btn-ghost btn-sm text-sm"
+          <a
+            href="https://github.com/Aditya-9-6/Spryzen-Benchmarks"
+            target="_blank"
+            rel="noopener noreferrer"
+            className="btn btn-ghost btn-sm text-sm flex items-center gap-1.5"
           >
-            Log In
-          </Link>
-          <Link
-            href="/auth/signup"
+            Benchmarks <ExternalLink size={13} />
+          </a>
+          <a
+            href="https://github.com/Aditya-9-6/spryzen-test-1"
+            target="_blank"
+            rel="noopener noreferrer"
             className="btn btn-primary btn-sm text-sm flex items-center gap-2"
           >
-            <Zap size={14} />
-            Start Free Trial
-          </Link>
+            <Github size={15} />
+            GitHub
+          </a>
         </div>
 
         {/* Mobile Menu Button */}
@@ -101,7 +108,7 @@ export default function Navbar() {
         </button>
       </motion.nav>
 
-      {/* Mobile Menu */}
+      {/* Mobile Drawer */}
       <AnimatePresence>
         {menuOpen && (
           <motion.div
@@ -114,7 +121,7 @@ export default function Navbar() {
             <div className="glass-strong m-4 rounded-2xl overflow-hidden">
               <div className="p-4 flex flex-col gap-1">
                 {navLinks.map((link) => (
-                  <Link
+                  <a
                     key={link.href}
                     href={link.href}
                     onClick={() => setMenuOpen(false)}
@@ -122,25 +129,30 @@ export default function Navbar() {
                   >
                     <span className="font-medium">{link.label}</span>
                     <ChevronRight size={16} />
-                  </Link>
+                  </a>
                 ))}
               </div>
               <div className="p-4 pt-0 flex flex-col gap-2">
-                <Link
-                  href="/auth/login"
+                <a
+                  href="https://github.com/Aditya-9-6/Spryzen-Benchmarks"
+                  target="_blank"
+                  rel="noopener noreferrer"
                   onClick={() => setMenuOpen(false)}
-                  className="btn btn-ghost w-full justify-center"
+                  className="btn btn-secondary w-full justify-center"
                 >
-                  Log In
-                </Link>
-                <Link
-                  href="/auth/signup"
+                  <ExternalLink size={16} />
+                  Benchmarks
+                </a>
+                <a
+                  href="https://github.com/Aditya-9-6/spryzen-test-1"
+                  target="_blank"
+                  rel="noopener noreferrer"
                   onClick={() => setMenuOpen(false)}
                   className="btn btn-primary w-full justify-center"
                 >
-                  <Zap size={16} />
-                  Start Free Trial
-                </Link>
+                  <Github size={16} />
+                  View GitHub Source
+                </a>
               </div>
             </div>
           </motion.div>

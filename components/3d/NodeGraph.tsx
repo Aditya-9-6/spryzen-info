@@ -8,24 +8,27 @@ import * as THREE from 'three';
 import { Suspense } from 'react';
 
 const NODES = [
-  { id: 'pingora',  label: 'Pingora Proxy', color: '#00d4ff',  pos: [0, 0, 0] as [number, number, number],         desc: 'L7 Reverse Proxy' },
-  { id: 'waf',      label: 'WAF Core',      color: '#7c3aed',  pos: [-3, -1.5, 0] as [number, number, number],     desc: '1500+ Attack Patterns' },
-  { id: 'tartarus', label: 'Tartarus',       color: '#ff1744',  pos: [-1, -2.5, 1] as [number, number, number],    desc: 'Honeypot Engine' },
-  { id: 'medusa',   label: 'Medusa',         color: '#ff6d00',  pos: [1, -2.5, 1] as [number, number, number],     desc: 'Rate Limiting' },
-  { id: 'aegis',    label: 'Aegis Prime',    color: '#00e676',  pos: [3, -1.5, 0] as [number, number, number],     desc: 'Kernel eBPF/XDP' },
-  { id: 'ghost',    label: 'Ghost Engine',   color: '#d4af37',  pos: [0, -3.5, -1] as [number, number, number],   desc: 'Wasm Plugins' },
-  { id: 'ouroboros',label: 'Ouroboros',      color: '#a855f7',  pos: [0, -5, 0] as [number, number, number],      desc: 'Self-Evolution AI' },
+  { id: 'core',       label: 'Spryzen+ Core', color: '#00d4ff', pos: [0, 0, 0] as [number, number, number],       desc: 'Monoio Thread-Per-Core' },
+  { id: 'waf',        label: 'WAF Engine',    color: '#7c3aed', pos: [-3, -1.5, 0] as [number, number, number],   desc: 'SIMD Aho-Corasick' },
+  { id: 'ebpf',       label: 'eBPF Shield',   color: '#00e676', pos: [3, -1.5, 0] as [number, number, number],    desc: 'XDP 1.4µs Kernel Drop' },
+  { id: 'ouroboros',  label: 'Ouroboros',     color: '#a855f7', pos: [-1.5, -3.2, 1] as [number, number, number],desc: 'Self-Healing AI' },
+  { id: 'spryzenid',  label: 'Spryzen ID',    color: '#d4af37', pos: [1.5, -3.2, 1] as [number, number, number], desc: 'Hardware Passports' },
+  { id: 'zkdpi',      label: 'ZK-DPI',        color: '#ff6d00', pos: [0, -4.5, 0] as [number, number, number],   desc: 'Bulletproofs ZK Proofs' },
+  { id: 'lsh',        label: 'LSH Cache',     color: '#ff1744', pos: [-1.2, -1.8, -1.5] as [number, number, number], desc: '15µs Semantic Match' },
+  { id: 'pqc',        label: 'PQC Kyber768',  color: '#38bdf8', pos: [1.2, -1.8, -1.5] as [number, number, number],  desc: 'FIPS 203 Quantum Safe' },
 ];
 
 const EDGES: [string, string][] = [
-  ['pingora', 'waf'],
-  ['pingora', 'medusa'],
-  ['pingora', 'aegis'],
-  ['waf', 'tartarus'],
-  ['waf', 'ghost'],
-  ['tartarus', 'ouroboros'],
-  ['ghost', 'ouroboros'],
-  ['medusa', 'ouroboros'],
+  ['core', 'waf'],
+  ['core', 'ebpf'],
+  ['core', 'lsh'],
+  ['core', 'pqc'],
+  ['waf', 'ouroboros'],
+  ['ebpf', 'spryzenid'],
+  ['ouroboros', 'zkdpi'],
+  ['spryzenid', 'zkdpi'],
+  ['lsh', 'ouroboros'],
+  ['pqc', 'spryzenid'],
 ];
 
 function Node({ node, index }: { node: typeof NODES[0]; index: number }) {
@@ -38,35 +41,35 @@ function Node({ node, index }: { node: typeof NODES[0]; index: number }) {
 
   return (
     <group position={node.pos}>
-      <Sphere ref={meshRef} args={[0.25, 32, 32]}>
+      <Sphere ref={meshRef} args={[0.26, 32, 32]}>
         <meshStandardMaterial
           color={node.color}
           emissive={node.color}
-          emissiveIntensity={1.2}
-          metalness={0.8}
+          emissiveIntensity={1.3}
+          metalness={0.85}
           roughness={0.1}
         />
       </Sphere>
-      <pointLight color={node.color} intensity={3} distance={2.5} />
+      <pointLight color={node.color} intensity={3.5} distance={2.8} />
 
-      {/* Label */}
       <Html
-        position={[0, 0.45, 0]}
+        position={[0, 0.48, 0]}
         center
-        distanceFactor={8}
+        distanceFactor={8.5}
         style={{ pointerEvents: 'none', textAlign: 'center' }}
       >
         <div style={{
-          background: 'rgba(3,3,5,0.85)',
-          border: `1px solid ${node.color}33`,
+          background: 'rgba(3,3,5,0.88)',
+          border: `1px solid ${node.color}40`,
           borderRadius: '6px',
           padding: '3px 8px',
           whiteSpace: 'nowrap',
+          boxShadow: `0 0 10px ${node.color}25`,
         }}>
           <div style={{ color: node.color, fontSize: '9px', fontWeight: 700, fontFamily: 'JetBrains Mono', letterSpacing: '0.05em' }}>
             {node.label}
           </div>
-          <div style={{ color: '#94a3b8', fontSize: '7px', fontFamily: 'Inter' }}>
+          <div style={{ color: '#94a3b8', fontSize: '7.5px', fontFamily: 'Inter' }}>
             {node.desc}
           </div>
         </div>
@@ -79,18 +82,19 @@ function Edges() {
   return (
     <>
       {EDGES.map(([from, to]) => {
-        const a = NODES.find(n => n.id === from)!;
-        const b = NODES.find(n => n.id === to)!;
+        const a = NODES.find(n => n.id === from);
+        const b = NODES.find(n => n.id === to);
+        if (!a || !b) return null;
         return (
           <Line
             key={`${from}-${to}`}
             points={[a.pos, b.pos]}
             color={a.color}
-            lineWidth={0.8}
+            lineWidth={0.9}
             dashed={true}
             dashScale={3}
             transparent
-            opacity={0.4}
+            opacity={0.45}
           />
         );
       })}
@@ -103,7 +107,7 @@ function RotatingGroup() {
 
   useFrame((state) => {
     if (!groupRef.current) return;
-    groupRef.current.rotation.y = state.clock.elapsedTime * 0.12;
+    groupRef.current.rotation.y = state.clock.elapsedTime * 0.14;
   });
 
   return (
@@ -125,8 +129,8 @@ export default function NodeGraph() {
         gl={{ antialias: true, alpha: true }}
       >
         <Suspense fallback={null}>
-          <ambientLight intensity={0.1} />
-          <Stars radius={60} depth={40} count={1500} factor={3} saturation={0} fade speed={0.5} />
+          <ambientLight intensity={0.15} />
+          <Stars radius={60} depth={40} count={1600} factor={3} saturation={0} fade speed={0.5} />
           <RotatingGroup />
           <EffectComposer>
             <Bloom intensity={1.5} luminanceThreshold={0.3} luminanceSmoothing={0.9} height={250} />
