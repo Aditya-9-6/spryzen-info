@@ -1,97 +1,139 @@
 'use client';
 
 import dynamic from 'next/dynamic';
+import Link from 'next/link';
 import { motion } from 'framer-motion';
-import {
-  Zap, Shield, ArrowRight, Star, Globe2, Brain, Lock, Cpu, Eye,
-  Fingerprint, RefreshCw, ShieldCheck, Network, Database, Bug, GitBranch,
-  Github, ExternalLink,
-} from 'lucide-react';
+import { Zap, Shield, ChevronRight, ArrowRight, Star, Terminal, Globe2, Brain, Lock } from 'lucide-react';
 import StatsCounter from '@/components/ui/StatsCounter';
 
-const ShieldScene = dynamic(() => import('@/components/3d/ShieldScene'), { ssr: false });
-const NodeGraph   = dynamic(() => import('@/components/3d/NodeGraph'),   { ssr: false });
+// Lazy-load heavy 3D components
+const ShieldScene  = dynamic(() => import('@/components/3d/ShieldScene'),  { ssr: false });
+const NodeGraph    = dynamic(() => import('@/components/3d/NodeGraph'),    { ssr: false });
+const PricingOrbs  = dynamic(() => import('@/components/3d/PricingOrbs'),  { ssr: false });
 
-/* ─── Scroll animation helpers ────────────────────────────────────────── */
-const fadeUp = {
-  hidden:  { opacity: 0, y: 40 },
-  visible: { opacity: 1, y: 0 },
-};
-
-const stagger = {
-  visible: { transition: { staggerChildren: 0.08 } },
-};
-
-/* ─── Data ─────────────────────────────────────────────────────────────── */
-const problemCards = [
-  { icon: Zap,     color: '#ff6d00', title: 'Severe Server Latency',           desc: 'Traditional WAFs inspect requests using heavy regex engines, adding 15ms to 50ms of network latency that destroys application performance.' },
-  { icon: Bug,     color: '#ff1744', title: 'Unable to Stop AI Attacks',       desc: 'Legacy WAFs rely on static rules that fail against mutating AI-generated attack payloads, prompt injections, and rogue AI botnets.' },
-  { icon: Database,color: '#d4af37', title: 'Exploding Cloud Costs',           desc: 'AWS WAF & Cloudflare Enterprise charge heavy fees per million requests and per rule evaluation ($3,000+/mo), exploding under load.' },
-  { icon: Lock,    color: '#7c3aed', title: 'Vendor Lock-in & Data Leakage',   desc: 'Cloud WAFs decrypt all your user payload data on third-party cloud servers, violating strict data sovereignty and privacy rules.' },
-];
-
-const coreModules = [
-  { icon: Zap,          color: '#ff6d00', title: 'Layer 7 WAF Engine',          desc: 'SIMD Aho-Corasick multi-pattern algorithm for sub-microsecond SQLi, XSS, and RCE payload detection.' },
-  { icon: Shield,       color: '#00e676', title: 'eBPF / XDP Kernel Shield',   desc: 'Hardware-level packet dropping inside the Linux network driver at 0% user-space CPU cost.' },
-  { icon: Brain,        color: '#ff1744', title: 'Semantic AI & LSH Cache',     desc: 'Locality-Sensitive Hashing (LSH) for 15µs vector threat matching, bypassing heavy LLM calls.' },
-  { icon: Lock,         color: '#d4af37', title: 'Post-Quantum Cryptography',   desc: 'FIPS 203 (ML-KEM-768 / Kyber768) quantum-resistant traffic encryption and key exchange.' },
-  { icon: Eye,          color: '#7c3aed', title: 'Bulletproofs ZK-DPI',         desc: 'Zero-Knowledge Deep Packet Inspection verifying traffic safety without decrypting private user payload.' },
-  { icon: Network,      color: '#00d4ff', title: 'HTTP Smuggling Detector',     desc: 'Dual-parser HTTP header inspection preventing request smuggling and desync attacks.' },
-];
-
-const benchmarkComparison = [
-  { metric: 'P50 Latency',       spryzen: '0.207 µs',     aws: '~5 ms',       cloudflare: '~2 ms',     modsecurity: '~15 ms' },
-  { metric: 'Single-Core RPS',   spryzen: '4,837,480',    aws: '~50,000',     cloudflare: '~100,000',  modsecurity: '~5,000' },
-  { metric: 'Zero-Day Defense',  spryzen: 'Ouroboros AI',  aws: 'Signature',   cloudflare: 'ML Rules',  modsecurity: 'Signature' },
-  { metric: 'Data Sovereignty',  spryzen: '100% Local',   aws: 'AWS Cloud',   cloudflare: 'CF Cloud',  modsecurity: 'Local' },
-  { metric: 'Quantum Resistance', spryzen: 'FIPS 203',     aws: 'None',        cloudflare: 'None',      modsecurity: 'None' },
-  { metric: 'Error Rate',        spryzen: '0.000%',       aws: 'Varies',      cloudflare: 'Varies',    modsecurity: 'High FP' },
-];
-
+// ─── Terminal Lines ───────────────────────────────────────────────────────
 const terminalLines = [
-  { color: '#94a3b8', text: '$ ouroboros run --cycle red-team' },
-  { color: '#00d4ff', text: '[OUROBOROS] Starting shadow red-team cycle...' },
-  { color: '#ff6d00', text: '[MUTATOR]  Generating 847 SQLi/XSS payload variants...' },
-  { color: '#ff1744', text: '[GAP]      Found bypass: /**/ comment injection in UNION SELECT' },
-  { color: '#a855f7', text: '[FORGE]    Generating AST-based virtual patch...' },
-  { color: '#00e676', text: '[DEPLOY]   Patch hot-loaded. 0 false positives confirmed.' },
-  { color: '#00d4ff', text: '[OUROBOROS] Evolution cycle complete. System adapted. +10 EVO' },
+  { type: 'system',  text: '[SYSTEM] Spryzen+ v2.6 — Sovereign Security Engine Online' },
+  { type: 'attack',  text: '[THREAT] SQLi probe from 45.33.32.156 — Score: 0.98' },
+  { type: 'defense', text: '[WAF]    Pattern matched: UNION SELECT. Blocked in 0.8ms.' },
+  { type: 'ai',      text: '[PHI-3]  "Coordinated DB enumeration attempt neutralized."' },
+  { type: 'system',  text: '[TARTARUS] Attacker banished to Mirror Dimension.' },
+  { type: 'defense', text: '[GALACTIC] Threat signature broadcast to global mesh.' },
+  { type: 'ai',      text: '[XP]     +100 XP | Level 3 → Autonomous SOC Unlocked' },
+  { type: 'default', text: '█' },
 ];
 
-const team = [
-  { name: 'Sanjit Pawar',   role: 'Architecture & Presentation Lead' },
-  { name: 'Aditya Dahale',  role: 'Core Engine & eBPF Engineer' },
-  { name: 'Jainil Nakrani', role: 'AI & Cryptography Engineer' },
+const colorMap: Record<string, string> = {
+  system:  'var(--neon-cyan)',
+  attack:  'var(--neon-crimson)',
+  defense: 'var(--neon-emerald)',
+  ai:      '#a855f7',
+  default: 'var(--text-muted)',
+};
+
+// ─── Feature Cards ────────────────────────────────────────────────────────
+const features = [
+  {
+    icon: Shield,
+    color: 'var(--neon-cyan)',
+    badge: 'God Protocol',
+    title: '1,500+ Attack Patterns',
+    desc: 'From Prototype Pollution to GraphQL nested bombs. Catch the 15% of attacks commercial WAFs miss.',
+  },
+  {
+    icon: Brain,
+    color: '#a855f7',
+    badge: 'Autonomous',
+    title: '6 Sovereign AI Agents',
+    desc: 'ARIA (Business Impact), HUNTER (Stealth), COMPLY (Statutory Audit) running 24/7 without human input.',
+  },
+  {
+    icon: Lock,
+    color: 'var(--neon-emerald)',
+    badge: 'On-Premise Native',
+    title: 'Zero Data Sovereignty Risk',
+    desc: 'Your traffic never touches our servers. Absolute on-premise filtering with eBPF kernel-level speed.',
+  },
+  {
+    icon: Globe2,
+    color: 'var(--neon-gold)',
+    badge: 'Global Mesh',
+    title: 'Galactic Consensus',
+    desc: 'One node\'s discovery instantly protects every node worldwide via quantum-signed threat gossip.',
+  },
+  {
+    icon: Terminal,
+    color: 'var(--neon-crimson)',
+    badge: 'Mirror Dimension',
+    title: 'Tartarus Honeypot Engine',
+    desc: 'Persistent attackers are banished to infinite fake infrastructure that exhausts their resources.',
+  },
+  {
+    icon: Zap,
+    color: 'var(--neon-orange)',
+    badge: 'Self-Evolving',
+    title: 'Ouroboros Engine',
+    desc: 'Shadow red-teaming generates and deploys Wasm patches before attackers can pivot. 0-day resilience.',
+  },
 ];
 
-/* ═══════════════════════════════════════════════════════════════════════ */
+// ─── Compliance Stats ─────────────────────────────────────────────────────
+const complianceItems = [
+  { label: 'DPDP 2023', color: 'var(--neon-cyan)' },
+  { label: 'GDPR',      color: 'var(--neon-violet)' },
+  { label: 'ISO 27001', color: 'var(--neon-emerald)' },
+  { label: 'SOC 2',     color: 'var(--neon-gold)' },
+  { label: 'PCI DSS',   color: 'var(--neon-orange)' },
+];
 
 export default function HomePage() {
   return (
     <>
-      {/* ─── HERO ──────────────────────────────────────────────────────── */}
+      {/* ─── HERO ──────────────────────────────────────────────────────────── */}
       <section
         style={{
           minHeight: 'calc(100vh - 72px)',
-          display: 'flex', flexDirection: 'column',
-          alignItems: 'center', justifyContent: 'center',
-          position: 'relative', overflow: 'hidden',
-          padding: '4rem var(--section-px)', textAlign: 'center',
+          display: 'flex',
+          flexDirection: 'column',
+          alignItems: 'center',
+          justifyContent: 'center',
+          position: 'relative',
+          overflow: 'hidden',
+          padding: '4rem var(--section-px)',
+          textAlign: 'center',
         }}
       >
+        {/* Background glow orbs */}
         <div className="glow-orb glow-orb-cyan" style={{ width: 700, height: 700, top: -200, right: -200, zIndex: 0 }} />
         <div className="glow-orb glow-orb-violet" style={{ width: 500, height: 500, bottom: -150, left: -150, zIndex: 0 }} />
 
+        {/* 3D Shield background */}
         <div style={{ position: 'absolute', inset: 0, zIndex: 0, opacity: 0.7 }}>
           <ShieldScene />
         </div>
 
-        <div style={{ position: 'absolute', bottom: 0, left: 0, right: 0, height: '35%', background: 'linear-gradient(to bottom, transparent, var(--bg-void))', zIndex: 1 }} />
+        {/* Bottom gradient fade */}
+        <div style={{
+          position: 'absolute',
+          bottom: 0,
+          left: 0,
+          right: 0,
+          height: '35%',
+          background: 'linear-gradient(to bottom, transparent, var(--bg-void))',
+          zIndex: 1,
+        }} />
 
+        {/* Content */}
         <div style={{ position: 'relative', zIndex: 2, maxWidth: '900px' }}>
-          <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.6 }}>
+          {/* Eyebrow badge */}
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.6 }}
+          >
             <span className="badge badge-cyan" style={{ marginBottom: '1.5rem', display: 'inline-flex' }}>
-              <Star size={10} /> Team Spryzen · IronWall+
+              <Star size={10} />
+              Absolute Intelligence Supremacy · v2.6 Production Ready
             </span>
           </motion.div>
 
@@ -101,8 +143,8 @@ export default function HomePage() {
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.7, delay: 0.1 }}
           >
-            The Autonomous Future of{' '}
-            <span className="text-gradient-cyan">Web & AI Defense.</span>
+            Defend Like a{' '}
+            <span className="text-gradient-cyan">Sovereign.</span>
           </motion.h1>
 
           <motion.p
@@ -112,9 +154,8 @@ export default function HomePage() {
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.6, delay: 0.2 }}
           >
-            Sub-microsecond eBPF inspection. Self-healing Ouroboros AI.
-            Hardware-bound Spryzen ID. Post-quantum encryption.
-            Zero cloud proxy tax. 100% data sovereignty.
+            The world&apos;s first self-evolving, on-premise AI security engine with 1,500+ detection patterns,
+            6 autonomous SOC agents, and real-time Tartarus honeypot deception — 62% cheaper than Cloudflare.
           </motion.p>
 
           <motion.div
@@ -123,28 +164,37 @@ export default function HomePage() {
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.6, delay: 0.3 }}
           >
-            <a href="#benchmarks" className="btn btn-primary btn-lg">
-              <Zap size={18} /> View Benchmarks
-            </a>
-            <a
-              href="https://github.com/Aditya-9-6/spryzen-test-1"
-              target="_blank"
-              rel="noopener noreferrer"
-              className="btn btn-secondary btn-lg"
-            >
-              <Github size={18} /> Explore on GitHub
-            </a>
+            <Link href="/auth/signup" className="btn btn-primary btn-lg">
+              <Zap size={18} />
+              Start Free Trial
+            </Link>
+            <Link href="/wargame" className="btn btn-secondary btn-lg">
+              View Live War Game
+              <ChevronRight size={18} />
+            </Link>
           </motion.div>
 
+          {/* Trust indicators */}
           <motion.div
             className="flex items-center justify-center gap-6 mt-8 flex-wrap"
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             transition={{ duration: 0.6, delay: 0.5 }}
           >
-            {['0.207µs P50 Latency', '4.83M RPS / Core', '100% Mitigation'].map((text) => (
-              <span key={text} className="flex items-center gap-2 text-sm" style={{ color: 'var(--text-muted)' }}>
-                <span style={{ width: 6, height: 6, borderRadius: '50%', background: 'var(--neon-emerald)', boxShadow: '0 0 8px var(--neon-emerald)', display: 'inline-block' }} />
+            {['No credit card required', 'DPDP Compliant', '99.9% Uptime SLA'].map((text) => (
+              <span
+                key={text}
+                className="flex items-center gap-2 text-sm"
+                style={{ color: 'var(--text-muted)' }}
+              >
+                <span
+                  style={{
+                    width: 6, height: 6, borderRadius: '50%',
+                    background: 'var(--neon-emerald)',
+                    boxShadow: '0 0 8px var(--neon-emerald)',
+                    display: 'inline-block',
+                  }}
+                />
                 {text}
               </span>
             ))}
@@ -152,77 +202,105 @@ export default function HomePage() {
         </div>
       </section>
 
-      {/* ─── STATS ─────────────────────────────────────────────────────── */}
+      {/* ─── STATS ─────────────────────────────────────────────────────────── */}
       <section className="section">
         <StatsCounter />
       </section>
 
-      {/* ─── PROBLEM STATEMENT ─────────────────────────────────────────── */}
-      <section className="section" id="problem">
+      {/* ─── FEATURES ──────────────────────────────────────────────────────── */}
+      <section className="section" id="features">
         <div className="section-header">
-          <span className="section-eyebrow">The Problem</span>
-          <h2 className="text-h1">Legacy Firewalls Are Too Slow &<br />Unable to Stop AI Attacks</h2>
-          <p className="text-lead" style={{ maxWidth: 600, margin: '1rem auto 0' }}>
-            Why traditional proxy firewalls fail cloud-native & agentic applications.
+          <span className="section-eyebrow">Core Technology</span>
+          <h2 className="text-h1">Indestructible Architecture</h2>
+          <p className="text-lead" style={{ maxWidth: 560, margin: '1rem auto 0' }}>
+            Built for state-level resilience and sub-millisecond precision — from the kernel up.
           </p>
         </div>
 
-        <motion.div
-          className="grid-2"
-          initial="hidden"
-          whileInView="visible"
-          viewport={{ once: true, margin: '-60px' }}
-          variants={stagger}
-        >
-          {problemCards.map((card) => (
-            <motion.div key={card.title} className="glass-card" style={{ padding: '2rem' }} variants={fadeUp}>
-              <div style={{ display: 'flex', alignItems: 'center', gap: '1rem', marginBottom: '1rem' }}>
-                <div style={{ width: 48, height: 48, borderRadius: 'var(--radius-sm)', background: `${card.color}15`, border: `1px solid ${card.color}33`, display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-                  <card.icon size={22} style={{ color: card.color }} />
+        <div className="grid-features">
+          {features.map((f, i) => (
+            <motion.div
+              key={f.title}
+              className="glass-card"
+              style={{ padding: '2rem' }}
+              initial={{ opacity: 0, y: 30 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              viewport={{ once: true, margin: '-60px' }}
+              transition={{ duration: 0.5, delay: i * 0.08 }}
+            >
+              <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', marginBottom: '1.5rem' }}>
+                <div
+                  style={{
+                    width: 48, height: 48, borderRadius: 'var(--radius-sm)',
+                    background: `${f.color}15`,
+                    border: `1px solid ${f.color}33`,
+                    display: 'flex', alignItems: 'center', justifyContent: 'center',
+                  }}
+                >
+                  <f.icon size={22} style={{ color: f.color }} />
                 </div>
-                <h3 className="text-h3">{card.title}</h3>
+                <span
+                  className="badge"
+                  style={{
+                    background: `${f.color}15`,
+                    color: f.color,
+                    border: `1px solid ${f.color}33`,
+                    fontSize: '0.65rem',
+                  }}
+                >
+                  {f.badge}
+                </span>
               </div>
-              <p style={{ color: 'var(--text-secondary)', fontSize: '0.9375rem', lineHeight: 1.65 }}>{card.desc}</p>
+              <h3 className="text-h3" style={{ marginBottom: '0.75rem' }}>{f.title}</h3>
+              <p style={{ color: 'var(--text-secondary)', fontSize: '0.9375rem', lineHeight: 1.65 }}>{f.desc}</p>
             </motion.div>
           ))}
-        </motion.div>
+        </div>
       </section>
 
-      {/* ─── ARCHITECTURE ──────────────────────────────────────────────── */}
+      {/* ─── ARCHITECTURE FLYTHROUGH ───────────────────────────────────────── */}
       <section className="section" id="architecture">
         <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '4rem', alignItems: 'center' }}>
           <div>
-            <span className="section-eyebrow">3-Layer Security Pipeline</span>
-            <h2 className="text-h1">Origin-Native eBPF & Monoio Engine</h2>
+            <span className="section-eyebrow">How It Works</span>
+            <h2 className="text-h1">Defense in Depth</h2>
             <p className="text-lead" style={{ margin: '1rem 0 2rem' }}>
-              Running inside your host Linux Kernel — not a cloud proxy.
+              Six interlocking security layers — each with its own AI agent — create a fortress that
+              hardens itself every time an attacker probes it.
             </p>
 
             {[
-              { color: '#00e676', badge: '1.4 µs',  label: 'Layer 0 — eBPF XDP',    desc: 'Kernel-space DDoS drop via aya Rust' },
-              { color: '#d4af37', badge: '12 µs',   label: 'Layer 7 — Monoio WAF',   desc: 'Thread-per-core with SO_REUSEPORT, zero lock contention' },
-              { color: '#a855f7', badge: 'Async',    label: 'AI Engine — Ouroboros',   desc: 'SIMD fast-path for 99% clean traffic, ONNX for suspicious' },
+              { color: 'var(--neon-cyan)',    label: 'Pingora Proxy',   desc: 'L7 reverse proxy core — TLS, routing' },
+              { color: '#7c3aed',             label: 'WAF Core',        desc: '1,500+ patterns, ML anomaly detection' },
+              { color: 'var(--neon-crimson)', label: 'Tartarus Engine', desc: 'Honeypot deception, Mirror Dimension' },
+              { color: 'var(--neon-emerald)', label: 'Aegis Prime',     desc: 'Kernel eBPF/XDP packet filtering' },
+              { color: 'var(--neon-gold)',    label: 'Ghost Engine',    desc: 'Hot-reloadable Wasm plugin runtime' },
+              { color: '#a855f7',             label: 'Ouroboros AI',    desc: 'Self-evolution via shadow red-teaming' },
             ].map((item, i) => (
               <motion.div
                 key={item.label}
-                className="flex items-start gap-4 mb-5"
+                className="flex items-start gap-4 mb-4"
                 initial={{ opacity: 0, x: -20 }}
                 whileInView={{ opacity: 1, x: 0 }}
                 viewport={{ once: true }}
-                transition={{ delay: i * 0.1 }}
+                transition={{ delay: i * 0.08 }}
               >
-                <div style={{ width: 10, height: 10, borderRadius: '50%', background: item.color, boxShadow: `0 0 10px ${item.color}`, marginTop: 6, flexShrink: 0 }} />
+                <div style={{
+                  width: 10, height: 10, borderRadius: '50%',
+                  background: item.color,
+                  boxShadow: `0 0 10px ${item.color}`,
+                  marginTop: 5, flexShrink: 0,
+                }} />
                 <div>
-                  <div style={{ display: 'flex', alignItems: 'center', gap: '0.75rem', marginBottom: '0.25rem' }}>
-                    <span style={{ color: item.color, fontWeight: 700, fontSize: '0.95rem' }}>{item.label}</span>
-                    <span className="badge" style={{ background: `${item.color}20`, color: item.color, border: `1px solid ${item.color}40`, fontSize: '0.65rem', padding: '0.2rem 0.5rem' }}>
-                      {item.badge}
-                    </span>
-                  </div>
-                  <span style={{ color: 'var(--text-muted)', fontSize: '0.875rem' }}>{item.desc}</span>
+                  <span style={{ color: item.color, fontWeight: 700, fontSize: '0.9rem' }}>{item.label}</span>
+                  <span style={{ color: 'var(--text-muted)', fontSize: '0.875rem', marginLeft: 8 }}>{item.desc}</span>
                 </div>
               </motion.div>
             ))}
+
+            <Link href="/features" className="btn btn-secondary mt-4">
+              View Full Architecture <ArrowRight size={16} />
+            </Link>
           </div>
 
           <div style={{ height: '500px', position: 'relative' }}>
@@ -231,214 +309,69 @@ export default function HomePage() {
         </div>
       </section>
 
-      {/* ─── OUROBOROS SPOTLIGHT ────────────────────────────────────────── */}
-      <section className="section" id="ouroboros" style={{ position: 'relative', overflow: 'hidden' }}>
-        <div className="glow-orb glow-orb-violet" style={{ width: 600, height: 600, top: -200, right: -100, zIndex: 0 }} />
-
-        <div style={{ position: 'relative', zIndex: 1 }}>
-          <div className="section-header">
-            <span className="section-eyebrow" style={{ color: '#a855f7' }}>Featured Innovation</span>
-            <h2 className="text-h1">
-              <RefreshCw size={36} style={{ display: 'inline', color: '#a855f7', marginRight: '0.5rem', verticalAlign: 'middle' }} />
-              Ouroboros Self-Healing Engine
-            </h2>
-            <p className="text-lead" style={{ maxWidth: 620, margin: '1rem auto 0' }}>
-              Autonomous red-team mutator that continuously generates attack variants,
-              discovers detection gaps, and forges virtual patches — with zero server downtime.
-            </p>
-          </div>
-
-          <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '3rem', alignItems: 'start' }}>
-            {/* Terminal animation */}
-            <div className="terminal" style={{ maxWidth: 600 }}>
-              <div className="terminal-header">
-                <div className="terminal-dot" style={{ background: '#ff5f56' }} />
-                <div className="terminal-dot" style={{ background: '#ffbd2e' }} />
-                <div className="terminal-dot" style={{ background: '#27c93f' }} />
-                <span style={{ color: 'var(--text-muted)', fontSize: '0.7rem', marginLeft: '0.5rem', fontFamily: 'JetBrains Mono' }}>
-                  ouroboros@spryzen — red-team-cycle
-                </span>
-              </div>
-              {terminalLines.map((line, i) => (
-                <motion.div
-                  key={i}
-                  style={{ color: line.color, marginBottom: '0.3rem' }}
-                  initial={{ opacity: 0 }}
-                  whileInView={{ opacity: 1 }}
-                  viewport={{ once: true }}
-                  transition={{ delay: i * 0.25 }}
-                >
-                  {line.text}
-                </motion.div>
-              ))}
-              <motion.span
-                style={{ color: '#00e676', display: 'inline-block' }}
-                initial={{ opacity: 0 }}
-                whileInView={{ opacity: 1 }}
-                viewport={{ once: true }}
-                transition={{ delay: 2 }}
-              >
-                █
-              </motion.span>
-            </div>
-
-            {/* Key points */}
-            <div>
-              {[
-                { icon: Bug,        color: '#ff6d00', title: 'Shadow Red-Teaming',      desc: 'Continuously mutates SQLi/XSS payloads in isolation to discover zero-day detection gaps.' },
-                { icon: GitBranch,  color: '#a855f7', title: 'Auto Virtual Patching',    desc: 'LLM-generated AST patches are validated against clean traffic for 0% false positive regression.' },
-                { icon: ShieldCheck,color: '#00e676', title: 'Zero-Downtime Hot-Reload', desc: 'Patches deploy instantly without restarting the engine or dropping any in-flight connections.' },
-              ].map((item, i) => (
-                <motion.div
-                  key={item.title}
-                  className="glass-card"
-                  style={{ padding: '1.5rem', marginBottom: '1rem' }}
-                  initial={{ opacity: 0, y: 20 }}
-                  whileInView={{ opacity: 1, y: 0 }}
-                  viewport={{ once: true }}
-                  transition={{ delay: i * 0.1 }}
-                >
-                  <div style={{ display: 'flex', alignItems: 'center', gap: '0.75rem', marginBottom: '0.5rem' }}>
-                    <item.icon size={18} style={{ color: item.color }} />
-                    <span style={{ fontWeight: 700, color: item.color, fontSize: '0.95rem' }}>{item.title}</span>
-                  </div>
-                  <p style={{ color: 'var(--text-secondary)', fontSize: '0.875rem', lineHeight: 1.65 }}>{item.desc}</p>
-                </motion.div>
-              ))}
-            </div>
-          </div>
-        </div>
-      </section>
-
-      {/* ─── SPRYZEN ID SPOTLIGHT ──────────────────────────────────────── */}
-      <section className="section" id="spryzen-id" style={{ position: 'relative', overflow: 'hidden' }}>
-        <div className="glow-orb glow-orb-gold" style={{ width: 500, height: 500, bottom: -200, left: -100, zIndex: 0 }} />
-
-        <div style={{ position: 'relative', zIndex: 1 }}>
-          <div className="section-header">
-            <span className="section-eyebrow" style={{ color: 'var(--neon-gold)' }}>Zero-Trust Identity</span>
-            <h2 className="text-h1">
-              <Fingerprint size={36} style={{ display: 'inline', color: 'var(--neon-gold)', marginRight: '0.5rem', verticalAlign: 'middle' }} />
-              Spryzen ID Hardware Passports
-            </h2>
-            <p className="text-lead" style={{ maxWidth: 620, margin: '1rem auto 0' }}>
-              Cryptographically bind agent credentials to physical hardware —
-              stolen tokens become useless on any other machine.
-            </p>
-          </div>
-
-          <motion.div
-            className="grid-3"
-            initial="hidden"
-            whileInView="visible"
-            viewport={{ once: true, margin: '-60px' }}
-            variants={stagger}
-          >
-            {[
-              { icon: Fingerprint, color: '#d4af37', title: 'Hardware-Bound Identity',
-                desc: 'X-Spryzen-Passport header carries encrypted claims binding tenant_id, agent_id, and machine hardware_fingerprint with Ed25519 signatures.' },
-              { icon: Shield,      color: '#00e676', title: 'Anti-Bot & Anti-Spoofing',
-                desc: 'Even if an attacker steals an API key or session token, they cannot use it from an unauthorized machine or rogue AI bot.' },
-              { icon: Zap,         color: '#ff1744', title: 'Instant eBPF Blackholing',
-                desc: 'Hardware mismatch detected? The attacker\'s IP is instantly blackholed inside the Linux kernel at the eBPF driver level — zero CPU overhead.' },
-            ].map((item) => (
-              <motion.div key={item.title} className="glass-card" style={{ padding: '2rem' }} variants={fadeUp}>
-                <div style={{ width: 48, height: 48, borderRadius: 'var(--radius-sm)', background: `${item.color}15`, border: `1px solid ${item.color}33`, display: 'flex', alignItems: 'center', justifyContent: 'center', marginBottom: '1.25rem' }}>
-                  <item.icon size={22} style={{ color: item.color }} />
-                </div>
-                <h3 className="text-h3" style={{ marginBottom: '0.75rem' }}>{item.title}</h3>
-                <p style={{ color: 'var(--text-secondary)', fontSize: '0.9375rem', lineHeight: 1.65 }}>{item.desc}</p>
-              </motion.div>
-            ))}
-          </motion.div>
-        </div>
-      </section>
-
-      {/* ─── 6 CORE MODULES ────────────────────────────────────────────── */}
-      <section className="section" id="features">
+      {/* ─── WAR GAME TERMINAL ─────────────────────────────────────────────── */}
+      <section className="section" id="wargame">
         <div className="section-header">
-          <span className="section-eyebrow">Core Technology</span>
-          <h2 className="text-h1">6 Core Technical Modules</h2>
+          <span className="section-eyebrow">Live Proof</span>
+          <h2 className="text-h1">The Great War Game</h2>
           <p className="text-lead" style={{ maxWidth: 560, margin: '1rem auto 0' }}>
-            Modular security engineering for high-performance defense.
+            Live transparency of our 30-day stress test against state-level volumetric attacks.
           </p>
         </div>
 
-        <motion.div
-          className="grid-features"
-          initial="hidden"
-          whileInView="visible"
-          viewport={{ once: true, margin: '-60px' }}
-          variants={stagger}
-        >
-          {coreModules.map((mod) => (
-            <motion.div key={mod.title} className="glass-card" style={{ padding: '2rem' }} variants={fadeUp}>
-              <div style={{ width: 48, height: 48, borderRadius: 'var(--radius-sm)', background: `${mod.color}15`, border: `1px solid ${mod.color}33`, display: 'flex', alignItems: 'center', justifyContent: 'center', marginBottom: '1.25rem' }}>
-                <mod.icon size={22} style={{ color: mod.color }} />
-              </div>
-              <h3 className="text-h3" style={{ marginBottom: '0.75rem' }}>{mod.title}</h3>
-              <p style={{ color: 'var(--text-secondary)', fontSize: '0.9375rem', lineHeight: 1.65 }}>{mod.desc}</p>
+        <div className="terminal" style={{ maxWidth: 760, margin: '0 auto' }}>
+          <div className="terminal-header">
+            <div className="terminal-dot" style={{ background: '#ff5f56' }} />
+            <div className="terminal-dot" style={{ background: '#ffbd2e' }} />
+            <div className="terminal-dot" style={{ background: '#27c93f' }} />
+            <span style={{ color: 'var(--text-muted)', fontSize: '0.75rem', marginLeft: '0.5rem', fontFamily: 'JetBrains Mono' }}>
+              spryzen@sovereign ~ — war-game-live
+            </span>
+          </div>
+
+          {terminalLines.map((line, i) => (
+            <motion.div
+              key={i}
+              style={{ color: colorMap[line.type], marginBottom: '0.25rem' }}
+              initial={{ opacity: 0 }}
+              whileInView={{ opacity: 1 }}
+              viewport={{ once: true }}
+              transition={{ delay: i * 0.2 }}
+            >
+              {line.text}
             </motion.div>
           ))}
-        </motion.div>
+        </div>
+
+        <div className="flex justify-center mt-8">
+          <Link href="/wargame" className="btn btn-primary">
+            <Zap size={16} />
+            View Full War Game Dashboard
+          </Link>
+        </div>
       </section>
 
-      {/* ─── BENCHMARKS ────────────────────────────────────────────────── */}
-      <section className="section" id="benchmarks">
+      {/* ─── PRICING PREVIEW ───────────────────────────────────────────────── */}
+      <section className="section" id="pricing">
         <div className="section-header">
-          <span className="section-eyebrow">Performance</span>
-          <h2 className="text-h1">Benchmark Comparisons</h2>
-          <p className="text-lead" style={{ maxWidth: 600, margin: '1rem auto 0' }}>
-            Verified single-core benchmarks against industry-leading WAF solutions.
+          <span className="section-eyebrow">Pricing</span>
+          <h2 className="text-h1">The 40% Rule</h2>
+          <p className="text-lead" style={{ maxWidth: 560, margin: '1rem auto 0' }}>
+            By filtering at the network card (not the cloud), we eliminate bandwidth costs —
+            and pass 100% of savings to you.
           </p>
         </div>
 
-        <div className="table-wrapper" style={{ maxWidth: 900, margin: '0 auto 3rem' }}>
-          <table className="data-table">
-            <thead>
-              <tr>
-                <th>Metric</th>
-                <th style={{ color: 'var(--neon-cyan)' }}>Spryzen+</th>
-                <th>AWS WAF</th>
-                <th>Cloudflare</th>
-                <th>ModSecurity</th>
-              </tr>
-            </thead>
-            <tbody>
-              {benchmarkComparison.map((row) => (
-                <tr key={row.metric}>
-                  <td style={{ fontWeight: 600 }}>{row.metric}</td>
-                  <td style={{ color: 'var(--neon-cyan)', fontWeight: 700 }}>{row.spryzen}</td>
-                  <td style={{ color: 'var(--text-muted)' }}>{row.aws}</td>
-                  <td style={{ color: 'var(--text-muted)' }}>{row.cloudflare}</td>
-                  <td style={{ color: 'var(--text-muted)' }}>{row.modsecurity}</td>
-                </tr>
-              ))}
-            </tbody>
-          </table>
-        </div>
+        <PricingOrbs />
 
-        <div className="flex items-center justify-center gap-4 flex-wrap">
-          <a
-            href="https://github.com/Aditya-9-6/Spryzen-Benchmarks"
-            target="_blank"
-            rel="noopener noreferrer"
-            className="btn btn-primary"
-          >
-            <Github size={16} /> Reproduce Benchmarks
-          </a>
-          <a
-            href="https://github.com/Aditya-9-6/spryzen-test-1"
-            target="_blank"
-            rel="noopener noreferrer"
-            className="btn btn-secondary"
-          >
-            View Full Source <ArrowRight size={16} />
-          </a>
+        <div className="flex justify-center mt-8">
+          <Link href="/pricing" className="btn btn-secondary">
+            See Full Pricing & ROI Calculator <ArrowRight size={16} />
+          </Link>
         </div>
       </section>
 
-      {/* ─── BUSINESS ROI ──────────────────────────────────────────────── */}
+      {/* ─── COMPLIANCE STRIP ──────────────────────────────────────────────── */}
       <section
         style={{
           padding: '3rem var(--section-px)',
@@ -447,110 +380,54 @@ export default function HomePage() {
           background: 'var(--bg-surface)',
         }}
       >
-        <motion.div
-          className="flex items-center justify-between flex-wrap gap-6"
-          initial={{ opacity: 0, y: 20 }}
-          whileInView={{ opacity: 1, y: 0 }}
-          viewport={{ once: true }}
-          transition={{ duration: 0.5 }}
-        >
+        <div className="flex items-center justify-between flex-wrap gap-6">
           <div>
-            <div className="text-label" style={{ color: 'var(--neon-gold)', marginBottom: '0.25rem' }}>Business & Strategic Value</div>
-            <div className="flex items-center gap-4 flex-wrap" style={{ fontSize: '0.95rem', fontWeight: 600, color: 'var(--text-primary)' }}>
-              <span>80%+ Cost Reduction</span>
-              <span style={{ color: 'var(--text-muted)' }}>•</span>
-              <span>Zero Cloud Detours</span>
-              <span style={{ color: 'var(--text-muted)' }}>•</span>
-              <span>100% Data Sovereignty</span>
-            </div>
+            <div className="text-label" style={{ color: 'var(--text-muted)' }}>Compliance & Certifications</div>
+            <p style={{ color: 'var(--text-secondary)', fontSize: '0.9rem' }}>Built for regulated enterprises</p>
           </div>
-          <div className="flex items-center gap-6 flex-wrap">
-            {[
-              { value: '500,000', label: 'Requests Verified' },
-              { value: '0.000%', label: 'Error Rate' },
-              { value: '100%', label: 'Mitigation Rate' },
-            ].map((stat) => (
-              <div key={stat.label} style={{ textAlign: 'center' }}>
-                <div style={{ fontFamily: 'Outfit', fontWeight: 900, fontSize: '1.5rem', color: 'var(--neon-cyan)' }}>{stat.value}</div>
-                <div style={{ fontSize: '0.7rem', color: 'var(--text-muted)', textTransform: 'uppercase', letterSpacing: '0.1em' }}>{stat.label}</div>
-              </div>
-            ))}
-          </div>
-        </motion.div>
-      </section>
-
-      {/* ─── TEAM ──────────────────────────────────────────────────────── */}
-      <section className="section" id="team">
-        <div className="section-header">
-          <span className="section-eyebrow">The Builders</span>
-          <h2 className="text-h1">Team Spryzen</h2>
-        </div>
-
-        <motion.div
-          className="grid-3"
-          style={{ maxWidth: 800, margin: '0 auto' }}
-          initial="hidden"
-          whileInView="visible"
-          viewport={{ once: true }}
-          variants={stagger}
-        >
-          {team.map((member) => (
-            <motion.div
-              key={member.name}
-              className="glass-card"
-              style={{ padding: '2rem', textAlign: 'center' }}
-              variants={fadeUp}
-            >
-              <div
+          <div className="flex items-center gap-4 flex-wrap">
+            {complianceItems.map((item) => (
+              <span
+                key={item.label}
+                className="badge"
                 style={{
-                  width: 72, height: 72, borderRadius: '50%',
-                  background: 'linear-gradient(135deg, var(--neon-cyan), var(--neon-violet))',
-                  display: 'flex', alignItems: 'center', justifyContent: 'center',
-                  margin: '0 auto 1.25rem', fontSize: '1.5rem', fontWeight: 900,
-                  fontFamily: 'Outfit', color: '#000',
+                  background: `${item.color}10`,
+                  color: item.color,
+                  border: `1px solid ${item.color}30`,
+                  fontSize: '0.75rem',
+                  padding: '0.5rem 1rem',
                 }}
               >
-                {member.name.split(' ').map(n => n[0]).join('')}
-              </div>
-              <h3 style={{ fontFamily: 'Outfit', fontWeight: 700, fontSize: '1.1rem', marginBottom: '0.25rem' }}>{member.name}</h3>
-              <p style={{ color: 'var(--text-muted)', fontSize: '0.85rem' }}>{member.role}</p>
-            </motion.div>
-          ))}
-        </motion.div>
+                ✓ {item.label}
+              </span>
+            ))}
+          </div>
+        </div>
       </section>
 
-      {/* ─── FINAL CTA ─────────────────────────────────────────────────── */}
+      {/* ─── FINAL CTA ─────────────────────────────────────────────────────── */}
       <section className="section" style={{ textAlign: 'center', position: 'relative', overflow: 'hidden' }}>
         <div className="glow-orb glow-orb-cyan" style={{ width: 600, height: 600, top: -200, left: '50%', transform: 'translateX(-50%)' }} />
 
         <div style={{ position: 'relative', zIndex: 1 }}>
-          <span className="section-eyebrow">Open Source</span>
+          <span className="section-eyebrow">Get Started Today</span>
           <h2 className="text-h1" style={{ marginBottom: '1rem' }}>
-            Explore the{' '}
-            <span className="text-gradient-cyan">Full Architecture.</span>
+            Ready to become{' '}
+            <span className="text-gradient-cyan">Sovereign?</span>
           </h2>
           <p className="text-lead" style={{ maxWidth: 500, margin: '0 auto 2.5rem' }}>
-            Spryzen+ is built with Rust, eBPF, and AI.
-            Dive into the source code and reproduce our benchmarks.
+            Join enterprises protecting billions of requests per month with Spryzen+.
+            Free Scout tier — no credit card required.
           </p>
 
           <div className="flex items-center justify-center gap-4 flex-wrap">
-            <a
-              href="https://github.com/Aditya-9-6/spryzen-test-1"
-              target="_blank"
-              rel="noopener noreferrer"
-              className="btn btn-primary btn-lg"
-            >
-              <Github size={20} /> View Source Code
-            </a>
-            <a
-              href="https://github.com/Aditya-9-6/Spryzen-Benchmarks"
-              target="_blank"
-              rel="noopener noreferrer"
-              className="btn btn-secondary btn-lg"
-            >
-              Benchmark Suite <ExternalLink size={18} />
-            </a>
+            <Link href="/auth/signup" className="btn btn-primary btn-lg">
+              <Zap size={20} />
+              Start Free — No Card Needed
+            </Link>
+            <Link href="/contact" className="btn btn-secondary btn-lg">
+              Talk to Sales <ArrowRight size={18} />
+            </Link>
           </div>
         </div>
       </section>
