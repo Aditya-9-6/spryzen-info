@@ -1,6 +1,6 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, Suspense } from 'react';
 import Link from 'next/link';
 import { useRouter, useSearchParams } from 'next/navigation';
 import { motion, AnimatePresence } from 'framer-motion';
@@ -17,7 +17,7 @@ const PLANS = [
 
 type Step = 1 | 2 | 3;
 
-export default function SignupPage() {
+function SignupForm() {
   const router       = useRouter();
   const searchParams = useSearchParams();
   const defaultPlan  = searchParams.get('plan') || 'sentinel';
@@ -490,5 +490,17 @@ export default function SignupPage() {
         </p>
       </div>
     </div>
+  );
+}
+
+export default function SignupPage() {
+  return (
+    <Suspense fallback={
+      <div style={{ minHeight: '100vh', display: 'flex', alignItems: 'center', justifyContent: 'center', color: 'var(--text-muted)', fontFamily: 'sans-serif' }}>
+        Loading setup...
+      </div>
+    }>
+      <SignupForm />
+    </Suspense>
   );
 }
