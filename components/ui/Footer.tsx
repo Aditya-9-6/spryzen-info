@@ -1,4 +1,37 @@
-import { Shield, Github, ExternalLink } from 'lucide-react';
+'use client';
+
+import Link from 'next/link';
+import { Shield, Github, Twitter, Linkedin, ExternalLink } from 'lucide-react';
+
+const footerLinks = {
+  Product: [
+    { label: 'Features',      href: '/features' },
+    { label: 'Log Inspector', href: '/analyzer' },
+    { label: 'Pricing',       href: '/pricing' },
+    { label: 'War Game',     href: '/wargame' },
+    { label: 'Developer Docs', href: '/docs' },
+  ],
+  Security: [
+    { label: 'WAF Engine',    href: '/features#waf' },
+    { label: 'Tartarus',      href: '/features#tartarus' },
+    { label: 'Aegis Prime',   href: '/features#aegis' },
+    { label: 'Ghost Engine',  href: '/features#ghost' },
+    { label: 'CVE Sentinel',  href: '/features#sentinel' },
+  ],
+  Company: [
+    { label: 'Contact',       href: '/contact' },
+    { label: 'Support',       href: '/portal/support' },
+    { label: 'Privacy Policy', href: '/privacy' },
+    { label: 'Terms of Service', href: '/terms' },
+    { label: 'Refund Policy', href: '/refund' },
+  ],
+};
+
+const socialLinks = [
+  { icon: Twitter,  href: '#', label: 'Twitter' },
+  { icon: Github,   href: '#', label: 'GitHub' },
+  { icon: Linkedin, href: '#', label: 'LinkedIn' },
+];
 
 export default function Footer() {
   return (
@@ -10,12 +43,13 @@ export default function Footer() {
     >
       {/* Main footer content */}
       <div
+        className="section-px"
         style={{ padding: '4rem var(--section-px) 2rem' }}
       >
-        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(240px, 1fr))', gap: '3rem' }}>
+        <div className="grid" style={{ gridTemplateColumns: '2fr 1fr 1fr 1fr', gap: '3rem' }}>
           {/* Brand Column */}
           <div>
-            <div className="flex items-center gap-3 mb-4">
+            <Link href="/" className="flex items-center gap-3 mb-4">
               <Shield
                 size={28}
                 className="text-[var(--neon-cyan)]"
@@ -29,21 +63,48 @@ export default function Footer() {
                   WebkitTextFillColor: 'transparent',
                 }}
               >
-                SPRYZEN<span className="text-[var(--neon-cyan)]">+</span>
+                SPRYZEN+
               </span>
-            </div>
+            </Link>
 
-            <p style={{ color: 'var(--text-muted)', fontSize: '0.875rem', lineHeight: 1.7, marginBottom: '1.5rem', maxWidth: '320px' }}>
-              The autonomous future of web &amp; AI defense. Sub-microsecond execution, zero cloud proxy tax, and 100% data sovereignty.
+            <p style={{ color: 'var(--text-muted)', fontSize: '0.9rem', lineHeight: 1.7, marginBottom: '1.5rem', maxWidth: '280px' }}>
+              The world&apos;s first self-evolving, sovereign AI security engine. 99.9% detection. 62% cheaper than Cloudflare.
             </p>
 
-            {/* Compliance & Standards Badges */}
-            <div className="flex flex-wrap gap-2">
-              {['eBPF / XDP', 'Monoio', 'FIPS 203 PQC', 'ZK-DPI', 'Ouroboros AI'].map((badge) => (
+            {/* Social Links */}
+            <div className="flex items-center gap-3">
+              {socialLinks.map(({ icon: Icon, href, label }) => (
+                <a
+                  key={label}
+                  href={href}
+                  aria-label={label}
+                  className="w-9 h-9 rounded-lg flex items-center justify-center transition-all duration-200"
+                  style={{
+                    background: 'var(--glass-surface)',
+                    border: '1px solid var(--glass-border)',
+                    color: 'var(--text-muted)',
+                  }}
+                  onMouseEnter={e => {
+                    (e.currentTarget as HTMLElement).style.color = 'var(--neon-cyan)';
+                    (e.currentTarget as HTMLElement).style.borderColor = 'rgba(0,212,255,0.3)';
+                  }}
+                  onMouseLeave={e => {
+                    (e.currentTarget as HTMLElement).style.color = 'var(--text-muted)';
+                    (e.currentTarget as HTMLElement).style.borderColor = 'var(--glass-border)';
+                  }}
+                >
+                  <Icon size={16} />
+                </a>
+              ))}
+            </div>
+
+            {/* Compliance Badges */}
+            <div className="flex flex-wrap gap-2 mt-5">
+              {['SOC 2', 'DPDP', 'ISO 27001', 'GDPR'].map((badge) => (
                 <span
                   key={badge}
                   className="badge badge-muted"
-                  style={{ fontSize: '0.65rem', padding: '0.25rem 0.6rem' }}
+                  style={{ fontSize: '0.65rem' }}
                 >
                   {badge}
                 </span>
@@ -51,108 +112,32 @@ export default function Footer() {
             </div>
           </div>
 
-          {/* Quick Navigation */}
-          <div>
-            <h4
-              className="text-label mb-4"
-              style={{ color: 'var(--text-muted)' }}
-            >
-              Navigation
-            </h4>
-            <ul style={{ listStyle: 'none', padding: 0, display: 'flex', flexDirection: 'column', gap: '0.6rem' }}>
-              <li>
-                <a href="#problem" className="text-sm transition-colors duration-200" style={{ color: 'var(--text-secondary)' }}>
-                  Problem Statement
-                </a>
-              </li>
-              <li>
-                <a href="#architecture" className="text-sm transition-colors duration-200" style={{ color: 'var(--text-secondary)' }}>
-                  3-Layer Architecture
-                </a>
-              </li>
-              <li>
-                <a href="#ouroboros" className="text-sm transition-colors duration-200" style={{ color: 'var(--text-secondary)' }}>
-                  Ouroboros Self-Healing
-                </a>
-              </li>
-              <li>
-                <a href="#spryzen-id" className="text-sm transition-colors duration-200" style={{ color: 'var(--text-secondary)' }}>
-                  Spryzen ID Passports
-                </a>
-              </li>
-              <li>
-                <a href="#benchmarks" className="text-sm transition-colors duration-200" style={{ color: 'var(--text-secondary)' }}>
-                  Benchmark Matrices
-                </a>
-              </li>
-            </ul>
-          </div>
-
-          {/* Repositories */}
-          <div>
-            <h4
-              className="text-label mb-4"
-              style={{ color: 'var(--text-muted)' }}
-            >
-              Repositories
-            </h4>
-            <ul style={{ listStyle: 'none', padding: 0, display: 'flex', flexDirection: 'column', gap: '0.6rem' }}>
-              <li>
-                <a
-                  href="https://github.com/Aditya-9-6/spryzen-test-1"
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="text-sm flex items-center gap-1.5 transition-colors"
-                  style={{ color: 'var(--text-secondary)' }}
-                >
-                  <Github size={14} /> Spryzen+ Engine <ExternalLink size={11} />
-                </a>
-              </li>
-              <li>
-                <a
-                  href="https://github.com/Aditya-9-6/Spryzen-Benchmarks"
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="text-sm flex items-center gap-1.5 transition-colors"
-                  style={{ color: 'var(--text-secondary)' }}
-                >
-                  <Github size={14} /> Grafana k6 Suite <ExternalLink size={11} />
-                </a>
-              </li>
-              <li>
-                <a
-                  href="https://github.com/Aditya-9-6/spryzen-info"
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="text-sm flex items-center gap-1.5 transition-colors"
-                  style={{ color: 'var(--text-secondary)' }}
-                >
-                  <Github size={14} /> Showcase Website <ExternalLink size={11} />
-                </a>
-              </li>
-            </ul>
-          </div>
-
-          {/* Team Spryzen */}
-          <div>
-            <h4
-              className="text-label mb-4"
-              style={{ color: 'var(--text-muted)' }}
-            >
-              Team Spryzen
-            </h4>
-            <ul style={{ listStyle: 'none', padding: 0, display: 'flex', flexDirection: 'column', gap: '0.6rem' }}>
-              <li className="text-sm" style={{ color: 'var(--text-secondary)' }}>
-                <strong style={{ color: 'var(--text-primary)' }}>Sanjit Pawar</strong> — Architecture &amp; Lead
-              </li>
-              <li className="text-sm" style={{ color: 'var(--text-secondary)' }}>
-                <strong style={{ color: 'var(--text-primary)' }}>Aditya Dahale</strong> — Core &amp; eBPF Engine
-              </li>
-              <li className="text-sm" style={{ color: 'var(--text-secondary)' }}>
-                <strong style={{ color: 'var(--text-primary)' }}>Jainil Nakrani</strong> — AI &amp; Cryptography
-              </li>
-            </ul>
-          </div>
+          {/* Link Columns */}
+          {Object.entries(footerLinks).map(([category, links]) => (
+            <div key={category}>
+              <h4
+                className="text-label mb-4"
+                style={{ color: 'var(--text-muted)' }}
+              >
+                {category}
+              </h4>
+              <ul className="space-y-2.5">
+                {links.map((link) => (
+                  <li key={link.label}>
+                    <Link
+                      href={link.href}
+                      className="text-sm transition-colors duration-200"
+                      style={{ color: 'var(--text-secondary)' }}
+                      onMouseEnter={e => (e.currentTarget as HTMLElement).style.color = 'var(--text-primary)'}
+                      onMouseLeave={e => (e.currentTarget as HTMLElement).style.color = 'var(--text-secondary)'}
+                    >
+                      {link.label}
+                    </Link>
+                  </li>
+                ))}
+              </ul>
+            </div>
+          ))}
         </div>
       </div>
 
@@ -165,7 +150,7 @@ export default function Footer() {
       >
         <div className="flex items-center justify-between flex-wrap gap-3">
           <p style={{ color: 'var(--text-muted)', fontSize: '0.8125rem' }}>
-            © {new Date().getFullYear()} Team Spryzen. Built with Rust, Linux eBPF/XDP, Monoio, and Next.js.
+            © {new Date().getFullYear()} Spryzen Security Systems Pvt. Ltd. All rights reserved.
           </p>
           <div className="flex items-center gap-4">
             <span
@@ -176,8 +161,17 @@ export default function Footer() {
                 className="inline-block w-2 h-2 rounded-full"
                 style={{ background: 'var(--neon-emerald)', boxShadow: '0 0 8px var(--neon-emerald)' }}
               />
-              Sub-Microsecond Operational
+              All systems operational
             </span>
+            <a
+              href="https://status.spryzen.plus"
+              className="flex items-center gap-1 transition-colors"
+              style={{ color: 'var(--text-muted)', fontSize: '0.8125rem' }}
+              target="_blank"
+              rel="noopener noreferrer"
+            >
+              Status <ExternalLink size={12} />
+            </a>
           </div>
         </div>
       </div>
