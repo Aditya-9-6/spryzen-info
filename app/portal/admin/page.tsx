@@ -72,7 +72,7 @@ export default function AdminPortal() {
   const [loading, setLoading] = useState(true);
   const [searchQuery, setSearchQuery] = useState('');
   const [updating, setUpdating] = useState(false);
-  const [activeTab, setActiveTab] = useState<'overview' | 'customers' | 'nodes'>('overview');
+  const [activeTab, setActiveTab] = useState<'overview' | 'customers' | 'nodes' | 'licensing'>('overview');
 
   // Customer Editing State
   const [editingCustomer, setEditingCustomer] = useState<Customer | null>(null);
@@ -80,6 +80,55 @@ export default function AdminPortal() {
   const [editLimit, setEditLimit] = useState(0);
   const [editRate, setEditRate] = useState(0);
   const [editCycle, setEditCycle] = useState('');
+
+  // Enterprise License Generator State
+  const [licCustId, setLicCustId] = useState('');
+  const [licTier, setLicTier] = useState('Fortress');
+  const [licDays, setLicDays] = useState(365);
+  const [licHwid, setLicHwid] = useState('');
+  const [licGenerating, setLicGenerating] = useState(false);
+  const [licSuccess, setLicSuccess] = useState<string | null>(null);
+
+  const handleGenerateLicense = async (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!licCustId.trim()) {
+      alert('Please enter a Customer ID / Org Name');
+      return;
+    }
+    setLicGenerating(true);
+    setLicSuccess(null);
+    try {
+      const res = await fetch('/api/admin/license', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          customer_id: licCustId,
+          tier: licTier,
+          days: licDays,
+          hwid: licHwid || undefined,
+        }),
+      });
+      if (!res.ok) throw new Error('Failed to generate signed license');
+      const licenseObj = await res.json();
+      
+      // Auto-trigger browser download of license.json
+      const blob = new Blob([JSON.stringify(licenseObj, null, 2)], { type: 'application/json' });
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      a.href = url;
+      a.download = `spryzen_license_${licCustId.toLowerCase().replace(/[^a-z0-9]/g, '_')}.json`;
+      document.body.appendChild(a);
+      a.click();
+      document.body.removeChild(a);
+      URL.revokeObjectURL(url);
+
+      setLicSuccess(`✅ License generated & downloaded for ${licCustId} (${licTier} Tier)`);
+    } catch (err: any) {
+      alert(err.message || 'Error generating license');
+    } finally {
+      setLicGenerating(false);
+    }
+  };
 
   // AI Copilot State
   const [copilotOpen, setCopilotOpen] = useState(false);
@@ -280,7 +329,13 @@ export default function AdminPortal() {
           onClick={() => setActiveTab('nodes')}
           className={`px-4 py-2 font-mono text-sm border-b-2 transition ${activeTab === 'nodes' ? 'border-[var(--neon-cyan)] text-[var(--neon-cyan)] font-bold' : 'border-transparent text-[var(--text-secondary)]'}`}
         >
-          Node Telemetry ({stats?.nodes.length})
+          Node Telemetry ({stats?.nodes.length || 0})
+        </button>
+        <button 
+          onClick={() => setActiveTab('licensing')}
+          className={`px-4 py-2 font-mono text-sm border-b-2 transition flex items-center gap-1.5 ${activeTab === 'licensing' ? 'border-[var(--neon-cyan)] text-[var(--neon-cyan)] font-bold' : 'border-transparent text-[var(--text-secondary)]'}`}
+        >
+          <Shield size={14} /> Enterprise Licensing
         </button>
       </div>
 
@@ -635,6 +690,122 @@ export default function AdminPortal() {
                 </div>
               </div>
             ))}
+          </div>
+        </div>
+      )}
+
+      {/* ENTERPRISE LICENSING TAB */}
+      {activeTab === 'licensing' && (
+        <div className="space-y-8 animate-fadeIn">
+          <div className="glass-card p-8 border border-[var(--glass-border)] rounded-2xl bg-[var(--bg-card)] relative overflow-hidden">
+            <div className="flex items-center justify-between mb-6 pb-4 border-b border-[var(--glass-border)]">
+              <div>
+                <h2 className="text-2xl font-black font-outfit text-[var(--text-primary)] flex items-center gap-3">
+                  <Shield className="text-[var(--neon-cyan)]" size={26} />
+                  Enterprise Sovereign License Authority
+                </h2>
+                <p className="text-sm text-[var(--text-secondary)] mt-1 font-mono">
+                  Issue cryptographically signed Ed25519 offline license files for On-Premise & Sovereign deployments.
+                </p>
+              </div>
+              <span className="px-3 py-1 rounded-full text-xs font-mono font-bold bg-[var(--neon-emerald-dim)] text-[var(--neon-emerald)] border border-[var(--neon-emerald-glow)]">
+                Authority Key: ACTIVE
+              </span>
+            </div>
+
+            <form onSubmit={handleGenerateLicense} className="max-w-2xl space-y-6">
+              {licSuccess && (
+                <div className="p-4 rounded-xl bg-[var(--neon-emerald-dim)] border border-[var(--neon-emerald-glow)] text-[var(--neon-emerald)] font-mono text-sm">
+                  {licSuccess}
+                </div>
+              )}
+
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-6 font-mono text-xs">
+                <div className="space-y-2">
+                  <label className="text-[var(--text-secondary)] block uppercase font-bold text-[11px]">
+                    Customer ID / Company Name *
+                  </label>
+                  <input
+                    type="text"
+                    required
+                    placeholder="e.g. ACME-GLOBAL-001"
+                    value={licCustId}
+                    onChange={(e) => setLicCustId(e.target.value)}
+                    className="w-full bg-[var(--bg-void)] border border-[var(--glass-border)] rounded-lg px-4 py-3 text-[var(--text-primary)] focus:outline-none focus:border-[var(--neon-cyan)] font-mono"
+                  />
+                </div>
+
+                <div className="space-y-2">
+                  <label className="text-[var(--text-secondary)] block uppercase font-bold text-[11px]">
+                    Subscription Tier *
+                  </label>
+                  <select
+                    value={licTier}
+                    onChange={(e) => setLicTier(e.target.value)}
+                    className="w-full bg-[var(--bg-void)] border border-[var(--glass-border)] rounded-lg px-4 py-3 text-[var(--text-primary)] focus:outline-none focus:border-[var(--neon-cyan)] font-mono"
+                  >
+                    <option value="Scout">Scout (WAF Basic)</option>
+                    <option value="Sentinel">Sentinel (WAF + ML Inference)</option>
+                    <option value="Fortress">Fortress (WAF + ML + Consensus)</option>
+                    <option value="IronClad">IronClad / Sovereign (Unlimited Enterprise)</option>
+                  </select>
+                </div>
+
+                <div className="space-y-2">
+                  <label className="text-[var(--text-secondary)] block uppercase font-bold text-[11px]">
+                    License Duration (Days)
+                  </label>
+                  <input
+                    type="number"
+                    min="1"
+                    max="3650"
+                    value={licDays}
+                    onChange={(e) => setLicDays(parseInt(e.target.value) || 365)}
+                    className="w-full bg-[var(--bg-void)] border border-[var(--glass-border)] rounded-lg px-4 py-3 text-[var(--text-primary)] focus:outline-none focus:border-[var(--neon-cyan)] font-mono"
+                  />
+                </div>
+
+                <div className="space-y-2">
+                  <label className="text-[var(--text-secondary)] block uppercase font-bold text-[11px]">
+                    Hardware Fingerprint (Optional)
+                  </label>
+                  <input
+                    type="text"
+                    placeholder="Leave blank for auto-generate"
+                    value={licHwid}
+                    onChange={(e) => setLicHwid(e.target.value)}
+                    className="w-full bg-[var(--bg-void)] border border-[var(--glass-border)] rounded-lg px-4 py-3 text-[var(--text-primary)] focus:outline-none focus:border-[var(--neon-cyan)] font-mono"
+                  />
+                </div>
+              </div>
+
+              <div className="p-4 rounded-xl bg-[var(--bg-elevated)] border border-[var(--glass-border)] space-y-2 text-xs font-mono text-[var(--text-muted)]">
+                <p className="font-bold text-[var(--text-secondary)]">🔒 What happens on generate:</p>
+                <ul className="list-disc pl-5 space-y-1">
+                  <li>Calculates exact expiration epoch and hardware constraints.</li>
+                  <li>Cryptographically signs the payload with your master Ed25519 signing key.</li>
+                  <li>Automatically downloads the ready-to-deploy <code className="text-[var(--neon-cyan)]">license.json</code> file to your browser.</li>
+                </ul>
+              </div>
+
+              <button
+                type="submit"
+                disabled={licGenerating}
+                className="px-8 py-3.5 rounded-xl bg-gradient-to-r from-[var(--neon-cyan)] to-[var(--neon-violet)] text-white font-bold font-mono text-sm hover:shadow-lg transition flex items-center gap-2 disabled:opacity-50"
+              >
+                {licGenerating ? (
+                  <>
+                    <RefreshCw className="animate-spin" size={16} />
+                    Signing Cryptographic License...
+                  </>
+                ) : (
+                  <>
+                    <Download size={16} />
+                    Generate & Download License File (.json)
+                  </>
+                )}
+              </button>
+            </form>
           </div>
         </div>
       )}
