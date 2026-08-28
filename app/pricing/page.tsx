@@ -50,47 +50,38 @@ const PLANS = [
     name: 'Starter',
     tier: 'Starter',
     icon: '🔒',
-    priceMonthly: 35,
-    priceAnnual: 28,
-    period: 'per month',
-    requests: '100,000 req/mo',
-    tokens: '~43M tokens included',
-    support: 'Email support',
-    overage: '$0.03 / 1K req',
+    priceMonthly: 299,
+    priceAnnual: 239,
+    period: 'per month · 10M requests',
+    requests: '10,000,000 req/mo',
+    tokens: 'Early AI Startups',
+    support: 'Email support · 99.9% Uptime',
+    overage: '$0.20 / 1M req',
     overageColor: '#60a5fa',
     color: '#60a5fa',
     ctaClass: 'btn-starter',
-    ctaText: 'Get started →',
+    ctaText: 'Deploy Starter →',
     ctaHref: '/auth/signup?plan=starter',
     detection: [
-      { label: '11-category taxonomy', included: true },
+      { label: 'Prompt injection defense', included: true },
       { label: 'OWASP LLM Top 10', included: true },
-      { label: 'Token smuggling', included: true },
-      { label: 'Encoding obfuscation', included: true },
-      { label: 'Multimodal scanning', included: false },
-      { label: 'WebSocket inspection', included: false },
+      { label: 'Token smuggling blocker', included: true },
+      { label: 'Encoding obfuscation filter', included: true },
+      { label: 'L0 XDP eBPF DDoS Guard', included: true },
+      { label: 'L1 SIMD Fast Path', included: true },
     ],
     models: [
-      { label: '0.5B fast gate', included: true },
+      { label: '0.5B Fast Wire Gate', included: true },
       { label: 'Semantic cosine index', included: true },
-      { label: '7B supreme court', included: false },
-    ],
-    pipeline: [
-      { label: 'L0 XDP/eBPF', included: true },
-      { label: 'L1 SIMD fast path', included: true },
-      { label: 'L2 JWT/OAuth', included: false },
-      { label: 'L4 Kani guard', included: false },
     ],
     features: [
       { label: 'REST API + Python SDK', included: true },
-      { label: 'Basic dashboard', included: true },
-      { label: '7-day request logs', included: true },
-      { label: 'Custom rules', included: false },
-      { label: 'Ouroboros evolution', included: false },
+      { label: 'Security Dashboard', included: true },
+      { label: '7-day request telemetry', included: true },
     ],
     supportItems: [
       { label: 'Email support', included: true },
-      { label: 'SLA guarantee', included: false },
+      { label: '99.9% Uptime SLA', included: true },
     ],
   },
   {
@@ -98,13 +89,13 @@ const PLANS = [
     name: 'Growth',
     tier: 'Growth',
     icon: '⚡',
-    priceMonthly: 120,
-    priceAnnual: 96,
-    period: 'per month',
-    requests: '1,000,000 req/mo',
-    tokens: '~430M tokens included',
-    support: 'Priority email · 99.5% SLA',
-    overage: '$0.0216 / 1K req',
+    priceMonthly: 999,
+    priceAnnual: 799,
+    period: 'per month · 50M requests',
+    requests: '50,000,000 req/mo',
+    tokens: 'Scale-ups & High Traffic',
+    support: 'Priority Slack · 99.95% SLA',
+    overage: '$0.15 / 1M req',
     overageColor: '#a78bfa',
     color: '#a78bfa',
     recommended: true,
@@ -112,36 +103,27 @@ const PLANS = [
     ctaText: 'Start Growth →',
     ctaHref: '/auth/signup?plan=growth',
     detection: [
+      { label: 'Everything in Starter, plus:', included: true, header: true },
       { label: 'Full 11-category taxonomy', included: true },
-      { label: 'OWASP + MITRE ATLAS', included: true },
       { label: 'Multimodal PDF/image scan', included: true },
-      { label: 'WebSocket inspection', included: true },
+      { label: 'WebSocket / gRPC inspection', included: true },
       { label: 'Semantic drift tracking', included: true },
       { label: 'Canary token detection', included: true },
       { label: 'Ouroboros hot-patching', included: true, special: true },
     ],
     models: [
-      { label: '0.5B fast gate', included: true },
-      { label: '7B supreme court', included: true },
-      { label: 'Semantic cosine index', included: true },
-    ],
-    pipeline: [
-      { label: 'All 10 layers active', included: true },
-      { label: 'L2 JWT/OAuth/GraphQL', included: true },
-      { label: 'L4 Kani math guard', included: true },
-      { label: 'L6 Speculative async', included: true },
-      { label: 'L9 Output inspection', included: true },
+      { label: '14B Cognitive LLM Gate', included: true },
+      { label: 'Semantic vector cache', included: true },
     ],
     features: [
-      { label: 'Full dashboard + analytics', included: true },
+      { label: 'Full dashboard + live telemetry', included: true },
       { label: '30-day request logs', included: true },
       { label: 'Webhooks + Slack alerts', included: true },
-      { label: '5 custom rules', included: true },
       { label: 'Attacker fingerprinting', included: true, special: true },
     ],
     supportItems: [
-      { label: 'Priority email', included: true },
-      { label: '99.5% uptime SLA', included: true },
+      { label: 'Priority Slack channel', included: true },
+      { label: '99.95% Uptime SLA', included: true },
     ],
   },
   {
@@ -149,41 +131,34 @@ const PLANS = [
     name: 'Pro',
     tier: 'Pro',
     icon: '🔥',
-    priceMonthly: 360,
-    priceAnnual: 288,
-    period: 'per month',
-    requests: '5,000,000 req/mo',
-    tokens: '~2.15B tokens included',
-    support: 'Shared Slack · 99.9% SLA · 4hr response',
-    overage: '$0.0144 / 1K req',
+    priceMonthly: 2999,
+    priceAnnual: 2399,
+    period: 'per month · 200M requests',
+    requests: '200,000,000 req/mo',
+    tokens: 'Mid-Market SaaS',
+    support: 'Shared Slack · 99.99% SLA · 1hr response',
+    overage: '$0.12 / 1M req',
     overageColor: '#4ade80',
     color: '#4ade80',
     ctaClass: 'btn-pro',
-    ctaText: 'Get Pro →',
+    ctaText: 'Deploy Pro →',
     ctaHref: '/auth/signup?plan=pro',
     detection: [
       { label: 'Everything in Growth, plus:', included: true, header: true },
       { label: 'Cross-customer threat intel', included: true, special: true },
       { label: 'Global Ouroboros feed', included: true, special: true },
-      { label: 'Business logic anomaly', included: true, special: true },
-      { label: 'gRPC + Protobuf inspection', included: true, special: true },
-      { label: 'SSRF chain detection', included: true, special: true },
+      { label: 'Business logic anomaly guard', included: true, special: true },
       { label: 'Threat actor attribution', included: true, special: true },
     ],
     features: [
-      { label: '50 custom rules', included: true },
+      { label: 'Unlimited custom rules', included: true },
       { label: '90-day request logs', included: true },
-      { label: 'OWASP compliance report', included: true },
-      { label: 'ASN reputation scoring', included: true },
-    ],
-    integrations: [
-      { label: 'Datadog / Grafana', included: true },
-      { label: 'PagerDuty alerts', included: true },
-      { label: 'Splunk / SIEM export', included: true },
+      { label: 'Automated compliance audits', included: true },
+      { label: 'SIEM export (Datadog/Splunk)', included: true },
     ],
     supportItems: [
-      { label: 'Shared Slack channel', included: true },
-      { label: '99.9% SLA · 4hr response', included: true },
+      { label: 'Dedicated engineering channel', included: true },
+      { label: '99.99% SLA · 1hr response', included: true },
     ],
   },
   {
@@ -191,39 +166,34 @@ const PLANS = [
     name: 'Enterprise',
     tier: 'Enterprise',
     icon: '👑',
-    priceMonthly: null,
-    priceAnnual: null,
-    period: 'annual contract',
-    requests: 'Unlimited requests',
-    tokens: 'Dedicated GPU nodes',
-    support: 'Dedicated CSM · 24/7 · 99.99% SLA',
-    startingAt: '$900/mo',
-    overage: null,
+    priceMonthly: 7499,
+    priceAnnual: 5999,
+    period: 'per month · 1B requests',
+    requests: '1,000,000,000 req/mo',
+    tokens: 'Global Fintech & Health',
+    support: 'Dedicated CSM · 24/7 · 15min SLA',
+    overage: '$0.10 / 1M req',
     color: '#c084fc',
     enterprise: true,
     ctaClass: 'btn-enterprise',
-    ctaText: 'Talk to us →',
+    ctaText: 'Deploy Enterprise →',
     ctaHref: '/contact',
     detection: [
       { label: 'Everything in Pro, plus:', included: true, header: true },
-      { label: 'On-premise deployment', included: true, special: true },
-      { label: '80B supreme court model', included: true, special: true },
+      { label: 'Dedicated 110-node Bare-Metal Mesh', included: true, special: true },
+      { label: 'Air-Gapped Sovereign Option', included: true, special: true },
       { label: 'Private Ouroboros instance', included: true, special: true },
       { label: 'Custom LLM fine-tuning', included: true, special: true },
-      { label: 'Air-gapped option', included: true, special: true },
     ],
     features: [
-      { label: 'SOC2 evidence pack', included: true },
-      { label: 'Kani proof documents', included: true },
-      { label: 'Pen test report', included: true },
-      { label: 'NDA + DPA + MSA', included: true },
-      { label: 'Unlimited custom rules', included: true },
+      { label: 'SOC2 & DPDP evidence pack', included: true },
+      { label: 'Kani formal proof report', included: true },
+      { label: 'Pen test audit report', included: true },
+      { label: 'Source code escrow option', included: true },
     ],
     supportItems: [
-      { label: 'Dedicated CSM', included: true },
-      { label: '24/7 phone support', included: true },
-      { label: '99.99% SLA · 1hr response', included: true },
-      { label: 'Financial SLA penalties', included: true },
+      { label: 'Dedicated 24/7 SOC engineer', included: true },
+      { label: '99.99% SLA · 15min response', included: true },
     ],
   },
 ];
@@ -554,6 +524,213 @@ export default function PricingPage() {
               </motion.div>
             );
           })}
+      {/* ─── MODULAR PAY-AS-YOU-GO ADD-ONS ─── */}
+      <section style={{ padding: '0 1.5rem 5rem', maxWidth: 1100, margin: '0 auto' }}>
+        <div style={{ marginBottom: 28, textAlign: 'center' }}>
+          <span className="section-eyebrow">Modular Power-Ups</span>
+          <h2 className="text-h2" style={{ marginBottom: 8 }}>Pay-As-You-Go Add-On Modules</h2>
+          <p className="text-lead" style={{ fontSize: '0.875rem', maxWidth: 650, margin: '0 auto' }}>
+            Scale specific capabilities on-demand without upgrading your entire subscription tier.
+          </p>
+        </div>
+
+        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(280px, 1fr))', gap: 16 }}>
+          {[
+            {
+              id: 'gw_router',
+              icon: '🔀',
+              title: 'Universal AI Gateway',
+              price: '$49 / mo',
+              desc: 'High-speed reverse proxy API routing + live observability baseline.',
+              cta: 'Activate Module',
+            },
+            {
+              id: 'id_protocol',
+              icon: '🪪',
+              title: 'Spryzen ID (Agent Auth)',
+              price: '$99 / mo',
+              desc: 'Stateless Ed25519 cryptographic identity & signature verification for autonomous AI Agents.',
+              cta: 'Activate Module',
+            },
+            {
+              id: 'redteam_ex',
+              icon: '🎯',
+              title: 'Red Team Exercise',
+              price: '$499 / mo',
+              desc: 'Automated adversarial probe campaigns and continuous pen-testing for development teams.',
+              cta: 'Activate Module',
+            },
+            {
+              id: 'compliance_acc',
+              icon: '📑',
+              title: 'Compliance Accelerator',
+              price: '$500 / mo',
+              desc: 'Auto-generated cryptographically signed SOC-2, HIPAA, ISO 27001, and India DPDP compliance PDFs.',
+              cta: 'Activate Module',
+            },
+            {
+              id: 'multi_region',
+              icon: '🌐',
+              title: 'Multi-Region Sync',
+              price: '$499 / mo',
+              desc: 'Global sub-millisecond state replication and zero-downtime multi-cloud cluster consensus.',
+              cta: 'Activate Module',
+            },
+            {
+              id: 'siem_hook',
+              icon: '📡',
+              title: 'SIEM Integration',
+              price: '$99 / mo',
+              desc: 'Real-time high-throughput streaming to Datadog, Splunk, Elastic, and Microsoft Sentinel.',
+              cta: 'Activate Module',
+            },
+            {
+              id: 'private_oro',
+              icon: '🐍',
+              title: 'Private Ouroboros Instance',
+              price: '$1,000 / mo',
+              desc: 'Dedicated private ML training loop for custom proprietary threat models and dynamic eBPF patches.',
+              cta: 'Activate Module',
+            },
+            {
+              id: 'exec_dash',
+              icon: '📊',
+              title: 'Executive 3D Dashboard',
+              price: '$149 / mo',
+              desc: 'WebGL live-attack 3D visual forensics with geographic telemetry mapping.',
+              cta: 'Activate Module',
+            },
+            {
+              id: 'aether_shield',
+              icon: '🛡️',
+              title: 'Aether Shield (ZK-DPI)',
+              price: '$399 / mo',
+              desc: 'Privacy-safe Zero-Knowledge Deep Packet Inspection without ever decrypting raw user data.',
+              cta: 'Activate Module',
+            },
+            {
+              id: 'm_td_rotate',
+              icon: '🔄',
+              title: 'Shapeshifter MTD',
+              price: '$199 / mo',
+              desc: 'Dynamic Moving Target Defense with automated IPv6/Port rotation to blind network scanners.',
+              cta: 'Activate Module',
+            },
+            {
+              id: 'soul_catcher',
+              icon: '🧬',
+              title: 'Soul Catcher (Biometrics)',
+              price: '$299 / mo',
+              desc: 'Real-time mouse dynamics, keystroke rhythm, and headless scraper bot detection (0 CAPTCHAs).',
+              cta: 'Activate Module',
+            },
+            {
+              id: 'vaporize_dlp',
+              icon: '💨',
+              title: 'Vaporize (DLP)',
+              price: '$249 / mo',
+              desc: 'Hardware-accelerated SIMD PII, API key, credit card, and secret leakage redaction in egress streams.',
+              cta: 'Activate Module',
+            },
+            {
+              id: 'lazarus_tunnel',
+              icon: '⚡',
+              title: 'Lazarus DEFCON-1',
+              price: '$499 / mo',
+              desc: 'Instant failover IronCore Sidecar tunnel activation during extreme catastrophic network partitions.',
+              cta: 'Activate Module',
+            },
+            {
+              id: 'honeypot_net',
+              icon: '🍯',
+              title: 'Cognitive Honeytokens',
+              price: '$299 / mo',
+              desc: 'Active deception network (Tartarus) synthesizing fake endpoints to poison and trap attackers.',
+              cta: 'Activate Module',
+            },
+            {
+              id: 'deepfake_guard',
+              icon: '👁️',
+              title: 'Multimodal Deepfake Guard',
+              price: '$299 / mo',
+              desc: 'Adversarial audio, visual, and image sanitization against multimodal AI prompt exploits.',
+              cta: 'Activate Module',
+            },
+            {
+              id: 'scraping_noise',
+              icon: '🌫️',
+              title: 'Adversarial Scraper Noise',
+              price: '$299 / mo',
+              desc: 'Active synthetic noise injection into response bodies to poison and break AI scrapers.',
+              cta: 'Activate Module',
+            },
+            {
+              id: 'rag_sanitizer',
+              icon: '🛡️',
+              title: 'Poisoned RAG Shield',
+              price: '$200 / mo',
+              desc: 'Vector-space embedding validation and semantic cosine anomaly detection for enterprise RAG.',
+              cta: 'Activate Module',
+            },
+          ].map((addon) => (
+            <motion.div
+              key={addon.title}
+              className="glass-card"
+              style={{
+                padding: '22px 20px',
+                borderRadius: 16,
+                background: 'var(--bg-card)',
+                border: '1px solid var(--glass-border)',
+                display: 'flex',
+                flexDirection: 'column',
+                justifyContent: 'space-between',
+              }}
+              whileHover={{ y: -3 }}
+            >
+              <div>
+                <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: 12 }}>
+                  <span style={{ fontSize: 24 }}>{addon.icon}</span>
+                  <span style={{
+                    fontFamily: 'monospace',
+                    fontWeight: 700,
+                    fontSize: '0.875rem',
+                    color: 'var(--neon-cyan)',
+                    background: 'var(--neon-cyan-dim)',
+                    padding: '3px 10px',
+                    borderRadius: 8,
+                    border: '1px solid var(--neon-cyan-glow)',
+                  }}>
+                    {addon.price}
+                  </span>
+                </div>
+                <h3 style={{ fontSize: '1rem', fontWeight: 800, marginBottom: 8, color: 'var(--text-primary)' }}>
+                  {addon.title}
+                </h3>
+                <p style={{ fontSize: '0.75rem', color: 'var(--text-muted)', lineHeight: 1.65, marginBottom: 18 }}>
+                  {addon.desc}
+                </p>
+              </div>
+
+              <Link
+                href="/portal/billing"
+                style={{
+                  display: 'block',
+                  textAlign: 'center',
+                  padding: '9px',
+                  borderRadius: 8,
+                  fontSize: '0.75rem',
+                  fontWeight: 600,
+                  textDecoration: 'none',
+                  background: 'var(--bg-elevated)',
+                  border: '1px solid var(--glass-border)',
+                  color: 'var(--text-primary)',
+                  transition: 'all 0.2s',
+                }}
+              >
+                {addon.cta} &rarr;
+              </Link>
+            </motion.div>
+          ))}
         </div>
       </section>
 
