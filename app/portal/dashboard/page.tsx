@@ -21,10 +21,10 @@ interface Stats {
 }
 
 const TIER_FEATURES: Record<string, string[]> = {
-  scout:    ['Core WAF', 'Basic Dashboard'],
-  sentinel: ['SmartCore AI', 'Tartarus 1D', 'Triage Bot'],
-  fortress: ['Behavioral AI', 'Tartarus 5D', 'Berserker', 'Galactic Read'],
-  ironclad: ['Deep Neural', 'Infinite Void', 'Soul Catcher', 'Full Autonomy'],
+  starter:    ['Prompt Injection Defense', 'OWASP Top 10', 'L0 XDP eBPF DDoS Guard', 'Security Dashboard'],
+  growth:     ['14B Cognitive LLM Gate', 'Multimodal Scanner', 'Ouroboros Hot-Patching', 'Priority Slack'],
+  pro:        ['Cross-Customer Threat Intel', 'Business Logic Anomaly', 'Automated Compliance Audits', 'SIEM Export'],
+  enterprise: ['Dedicated 110-Node Mesh', 'Air-Gapped Sovereign Option', 'AMD SEV-SNP Enclave', '24/7 SOC Engineer'],
 };
 
 export default function DashboardPage() {
